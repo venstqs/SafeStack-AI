@@ -73,6 +73,8 @@ SafeStack AI implements a dual-layer auditing framework:
 
 The mobile console maps autonomous sensor captures directly to the operator interface through five dedicated dashboards:
 
+![SafeStack AI Feature Presentations Showcase](docs/assets/features_mockup.png)
+
 *   **Tactical Telemetry HUD (Home)**: Displays a vector-based SVG map of the warehouse grid with pulsing active drone nodes, real-time signal links, and incident timeline feeds.
 *   **Structural Load matrix (Structure)**: Visualizes vertical deflection curvatures using real-time quadratic bezier equations. Includes diagnostic calibration switches to test threshold limits.
 *   **Multispectral Radiometric Grid (Vision AI)**: Consolidates thermal heat map arrays and weld inspection camera viewports equipped with target bounding boxes and focal HUD overlays.
