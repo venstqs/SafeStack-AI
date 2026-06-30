@@ -1,0 +1,1960 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SafeStack AI - Live Interactive Command Interface Mockup</title>
+  <!-- Google Fonts & Lucide Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Outfit:wght@400;600;800;900&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <style>
+    :root {
+      --bg-color: #07080A;
+      --card-bg: #0E1117;
+      --border-color: #171923;
+      --accent-blue: #8AAEE0;
+      --soft-blue: #B1C9EF;
+      --active-text: #F0F3FA;
+      --inactive-text: #638ECB;
+      --green: #10B981;
+      --orange: #F59E0B;
+      --red: #EF4444;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Outfit', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: #0F131C;
+      color: var(--active-text);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .promo-header {
+      text-align: center;
+      margin-bottom: 24px;
+      max-width: 500px;
+    }
+
+    .promo-header h1 {
+      font-weight: 900;
+      font-size: 24px;
+      letter-spacing: 1px;
+      color: var(--active-text);
+    }
+
+    .promo-header p {
+      color: var(--inactive-text);
+      font-size: 13px;
+      margin-top: 6px;
+    }
+
+    /* Mobile Device Outer Frame */
+    .phone-container {
+      width: 375px;
+      height: 780px;
+      background-color: #000;
+      border-radius: 40px;
+      padding: 12px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+      border: 4px solid #202530;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Screen view port */
+    .phone-screen {
+      width: 100%;
+      height: 100%;
+      background-color: var(--bg-color);
+      border-radius: 30px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* Top Speaker/Notch */
+    .phone-notch {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 110px;
+      height: 20px;
+      background-color: #000;
+      border-bottom-left-radius: 12px;
+      border-bottom-right-radius: 12px;
+      z-index: 1000;
+    }
+
+    /* Status Bar */
+    .status-bar {
+      height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 24px 0;
+      font-size: 11px;
+      font-weight: bold;
+      color: var(--active-text);
+      z-index: 999;
+    }
+
+    .status-right {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* App Header */
+    .app-header {
+      height: 52px;
+      border-bottom: 1.5px solid var(--border-color);
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .logo-mark {
+      width: 20px;
+      height: 20px;
+      border-radius: 5px;
+      border: 2px solid var(--soft-blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo-inner {
+      width: 8px;
+      height: 8px;
+      background-color: var(--accent-blue);
+      border-radius: 2px;
+    }
+
+    .header-titles {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header-title {
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 1.5px;
+    }
+
+    .header-subtitle {
+      font-size: 8px;
+      font-weight: bold;
+      color: var(--accent-blue);
+      letter-spacing: 0.5px;
+    }
+
+    .header-badge {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background-color: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 8px;
+      font-weight: bold;
+      color: var(--green);
+      letter-spacing: 0.5px;
+    }
+
+    .header-badge-dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background-color: var(--green);
+    }
+
+    /* Viewport Screen Content */
+    .viewport {
+      flex: 1;
+      overflow-y: auto;
+      padding: 14px;
+    }
+
+    .viewport::-webkit-scrollbar {
+      display: none;
+    }
+
+    .screen-panel {
+      display: none;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .screen-panel.active {
+      display: flex;
+    }
+
+    /* Global Typography / Mono */
+    .mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* HUD ribbon */
+    .hud-ribbon {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 8px 10px;
+    }
+
+    .hud-pill {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 9px;
+      font-weight: bold;
+      color: var(--accent-blue);
+    }
+
+    /* Map container */
+    .map-container {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .map-heading {
+      color: var(--inactive-text);
+      font-size: 8px;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    .map-svg {
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      background-color: #05070A;
+    }
+
+    /* Console header */
+    .console-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 10px;
+    }
+
+    .console-status {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      padding-left: 10px;
+      position: relative;
+    }
+
+    .status-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      position: absolute;
+      left: 0;
+      top: 5px;
+      background-color: var(--green);
+    }
+
+    .console-subtitle {
+      color: var(--inactive-text);
+      font-size: 8px;
+      font-weight: bold;
+      letter-spacing: 0.8px;
+    }
+
+    .console-title {
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .status-tag {
+      border: 1px solid var(--green);
+      color: var(--green);
+      border-radius: 5px;
+      padding: 2px 6px;
+      font-size: 8px;
+      font-weight: bold;
+      letter-spacing: 0.5px;
+    }
+
+    /* Numeric Gauges */
+    .gauge-row {
+      display: flex;
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 10px 0;
+    }
+
+    .gauge-box {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .gauge-val {
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .gauge-label {
+      color: var(--inactive-text);
+      font-size: 8px;
+      font-weight: bold;
+      letter-spacing: 0.5px;
+    }
+
+    .gauge-divider {
+      width: 1px;
+      height: 18px;
+      background-color: var(--border-color);
+      align-self: center;
+    }
+
+    /* Settings Switch Row */
+    .balancer-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 10px 12px;
+    }
+
+    .balancer-text {
+      flex: 1;
+    }
+
+    .balancer-title {
+      font-size: 10px;
+      font-weight: bold;
+      letter-spacing: 0.3px;
+    }
+
+    .balancer-desc {
+      font-size: 9px;
+      color: var(--accent-blue);
+      margin-top: 1px;
+    }
+
+    /* Switch Component */
+    .custom-switch {
+      width: 38px;
+      height: 20px;
+      background-color: #171923;
+      border-radius: 10px;
+      position: relative;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .custom-switch.on {
+      background-color: var(--accent-blue);
+    }
+
+    .custom-switch-knob {
+      width: 16px;
+      height: 16px;
+      background-color: #fff;
+      border-radius: 50%;
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      transition: left 0.2s;
+    }
+
+    .custom-switch.on .custom-switch-knob {
+      left: 20px;
+    }
+
+    /* Terminal logs */
+    .section-label-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .section-label {
+      font-size: 9px;
+      color: var(--accent-blue);
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    .log-feed {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .log-item {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+    }
+
+    .log-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 9px;
+    }
+
+    .log-severity {
+      font-weight: bold;
+    }
+
+    .log-time {
+      color: var(--inactive-text);
+    }
+
+    .log-message {
+      font-size: 11px;
+      line-height: 14px;
+      color: var(--soft-blue);
+    }
+
+    .log-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid #1a202c;
+      padding-top: 6px;
+      margin-top: 2px;
+      font-size: 8px;
+      color: var(--inactive-text);
+    }
+
+    .log-action {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      color: var(--accent-blue);
+      font-weight: bold;
+    }
+
+    /* Tab selector styles (Vision AI / etc) */
+    .tab-selector {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 3px;
+      display: flex;
+    }
+
+    .tab-btn {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px 0;
+      border-radius: 6px;
+      font-size: 8.5px;
+      font-weight: bold;
+      color: var(--inactive-text);
+      background-color: transparent;
+      border: none;
+      cursor: pointer;
+    }
+
+    .tab-btn.active {
+      background-color: #395886;
+      color: var(--active-text);
+    }
+
+    /* FLIR cell grids */
+    .flir-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      justify-content: space-between;
+    }
+
+    .flir-cell {
+      width: 31%;
+      aspect-ratio: 0.95;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+      background-color: #07080A;
+      padding: 6px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .flir-zone {
+      font-size: 7.5px;
+      font-weight: bold;
+      color: var(--inactive-text);
+    }
+
+    .flir-temp {
+      font-size: 14px;
+      font-weight: bold;
+      align-self: center;
+    }
+
+    .flir-status {
+      font-size: 7px;
+      font-weight: bold;
+      text-align: right;
+    }
+
+    /* Common Button Design */
+    .action-btn {
+      width: 100%;
+      height: 36px;
+      border-radius: 6px;
+      border: none;
+      font-size: 10px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      cursor: pointer;
+      color: #07080A;
+    }
+
+    /* Calibration console components */
+    .cal-box {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .cal-title-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .cal-title {
+      font-size: 11.5px;
+      font-weight: bold;
+    }
+
+    .cal-desc {
+      font-size: 9.5px;
+      color: var(--accent-blue);
+      line-height: 13px;
+    }
+
+    /* Weld scanner HUD */
+    .weld-viewport {
+      height: 130px;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      position: relative;
+      overflow: hidden;
+      background-color: #05070B;
+    }
+
+    .scanning-backdrop {
+      position: absolute;
+      inset: 0;
+      background-color: rgba(5, 7, 11, 0.95);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      z-index: 10;
+    }
+
+    .scanning-backdrop.active {
+      display: flex;
+    }
+
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    .scanning-txt {
+      font-size: 8px;
+      font-weight: bold;
+      letter-spacing: 0.5px;
+    }
+
+    /* Checklist metrics */
+    .check-list-container {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .check-box-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: #07080A;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 10px;
+    }
+
+    .check-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .check-status-badge {
+      font-size: 8px;
+      font-weight: bold;
+      padding: 2px 5px;
+      border-radius: 4px;
+    }
+
+    .check-title-col {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .check-name {
+      font-size: 10.5px;
+      font-weight: bold;
+    }
+
+    .check-info {
+      font-size: 8px;
+      color: var(--inactive-text);
+      margin-top: 1px;
+    }
+
+    /* Inductive pads power layout */
+    .dock-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .dock-card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .dock-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .drone-id {
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .dock-lbl {
+      font-size: 8px;
+      color: var(--accent-blue);
+      margin-top: 1px;
+    }
+
+    .drone-status-tag {
+      font-size: 7.5px;
+      font-weight: bold;
+      padding: 1px 5px;
+      border-radius: 4px;
+    }
+
+    .battery-hud-box {
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .battery-hud-top {
+      display: flex;
+      justify-content: space-between;
+      font-size: 9px;
+      font-weight: bold;
+    }
+
+    .battery-hud-left {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .charging-rate {
+      color: var(--green);
+      font-size: 8px;
+      margin-left: 2px;
+    }
+
+    .battery-bar-bg {
+      height: 3px;
+      background-color: #05070B;
+      border-radius: 1.5px;
+      overflow: hidden;
+    }
+
+    .battery-bar-fill {
+      height: 100%;
+      border-radius: 1.5px;
+      transition: width 0.3s;
+    }
+
+    .dock-task {
+      font-size: 9.5px;
+      color: var(--soft-blue);
+    }
+
+    .btn-engage-dock {
+      height: 28px;
+      border-radius: 5px;
+      background-color: transparent;
+      border: 1px solid var(--green);
+      color: var(--green);
+      font-size: 9px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-engage-dock.active {
+      background-color: var(--red);
+      border-color: var(--red);
+      color: #fff;
+    }
+
+    /* Modal dialog */
+    .modal-overlay {
+      position: absolute;
+      inset: 0;
+      background-color: rgba(7, 8, 10, 0.9);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 10000;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-box {
+      width: 100%;
+      background-color: var(--card-bg);
+      border: 1.5px solid var(--red);
+      border-radius: 14px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .modal-header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .modal-icon-ring {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background-color: rgba(239, 68, 68, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: pulse 1.4s infinite;
+    }
+
+    .modal-title {
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      color: #fca5a5;
+    }
+
+    .modal-body {
+      background-color: #05070B;
+      border-radius: 8px;
+      padding: 10px;
+      border: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .modal-time {
+      font-size: 8px;
+      color: var(--inactive-text);
+      font-weight: bold;
+    }
+
+    .modal-msg {
+      font-size: 11px;
+      line-height: 14px;
+      color: var(--soft-blue);
+    }
+
+    .modal-severity-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 9px;
+      border-top: 1px solid var(--border-color);
+      padding-top: 6px;
+      font-weight: bold;
+    }
+
+    .modal-footer {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .btn-modal-resolve {
+      height: 36px;
+      background-color: var(--red);
+      color: #fff;
+      font-weight: bold;
+      font-size: 10px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+
+    .btn-modal-close {
+      height: 36px;
+      background-color: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--accent-blue);
+      font-weight: bold;
+      font-size: 9.5px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    /* Tab bar Navigation */
+    .tab-bar {
+      height: 56px;
+      background-color: var(--card-bg);
+      border-top: 1px solid var(--border-color);
+      display: flex;
+    }
+
+    .tab-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      color: var(--inactive-text);
+      cursor: pointer;
+      position: relative;
+    }
+
+    .tab-item.active {
+      color: var(--active-text);
+    }
+
+    .tab-item-dot {
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      background-color: var(--soft-blue);
+      position: absolute;
+      bottom: 4px;
+      display: none;
+    }
+
+    .tab-item.active .tab-item-dot {
+      display: block;
+    }
+
+    .tab-lbl {
+      font-size: 7.5px;
+      font-weight: bold;
+      letter-spacing: 0.2px;
+    }
+
+    /* Keyframes */
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.15); opacity: 0.7; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="promo-header">
+    <h1>SafeStack AI Mockup Sandbox</h1>
+    <p>A fully interactive prototype matching the Obsidian design system. Switch tabs, trigger sweeps, and resolve incident logs below.</p>
+  </div>
+
+  <div class="phone-container">
+    <div class="phone-notch"></div>
+    <div class="phone-screen">
+      
+      <!-- OS Status Bar -->
+      <div class="status-bar">
+        <span id="os-time">09:09</span>
+        <div class="status-right">
+          <i data-lucide="wifi" style="width:12px;height:12px;"></i>
+          <i data-lucide="battery" style="width:14px;height:14px;"></i>
+        </div>
+      </div>
+
+      <!-- App Header Bar -->
+      <div class="app-header">
+        <div class="logo-container">
+          <div class="logo-mark">
+            <div class="logo-inner"></div>
+          </div>
+          <div class="header-titles">
+            <span class="header-title">SAFESTACK AI</span>
+            <span class="header-subtitle">COMMAND INTERFACE</span>
+          </div>
+        </div>
+        <div class="header-badge">
+          <div class="header-badge-dot"></div>
+          <span>ONLINE</span>
+        </div>
+      </div>
+
+      <!-- App Viewports viewport -->
+      <div class="viewport">
+        
+        <!-- ================= HOME TAB ================= -->
+        <div id="panel-home" class="screen-panel active">
+          <!-- Ribbon telemetry -->
+          <div class="hud-ribbon">
+            <div class="hud-pill mono"><i data-lucide="radio" style="width:11px;height:11px;"></i>RC LINK: 98%</div>
+            <div class="hud-pill mono"><i data-lucide="signal" style="width:11px;height:11px;"></i>GPS: 16 SATS</div>
+            <div class="hud-pill mono"><i data-lucide="compass" style="width:11px;height:11px;"></i>SWARM: D-04</div>
+          </div>
+
+          <!-- Live Vector Blueprint Map -->
+          <div class="map-container">
+            <span class="map-heading">LIVE PATROL VECTOR MAP</span>
+            <svg class="map-svg" width="100%" height="110" id="map-svg-element">
+              <!-- Grid partitions -->
+              <rect x="15" y="15" width="55" height="35" rx="2" fill="rgba(255,255,255,0.02)" stroke="#1a202c" stroke-width="0.8" />
+              <rect x="85" y="15" width="55" height="35" rx="2" fill="rgba(255,255,255,0.02)" stroke="#1a202c" stroke-width="0.8" />
+              <rect x="155" y="15" width="55" height="35" rx="2" fill="rgba(255,255,255,0.02)" stroke="#1a202c" stroke-width="0.8" />
+              <rect x="225" y="15" width="55" height="35" rx="2" fill="rgba(255,255,255,0.02)" stroke="#1a202c" stroke-width="0.8" />
+              
+              <rect x="15" y="60" width="55" height="35" rx="2" fill="rgba(255,255,255,0.02)" stroke="#1a202c" stroke-width="0.8" />
+              <rect x="85" y="60" width="55" height="35" rx="2" fill="rgba(255,255,255,0.02)" stroke="#1a202c" stroke-width="0.8" />
+              <rect x="155" y="60" width="55" height="35" rx="2" fill="rgba(255,255,255,0.02)" stroke="#1a202c" stroke-width="0.8" />
+              <rect x="225" y="60" width="55" height="35" rx="2" fill="rgba(255,255,255,0.02)" stroke="#1a202c" stroke-width="0.8" />
+
+              <text x="25" y="36" fill="#638ECB" font-size="7" font-weight="bold">BAY A</text>
+              <text x="95" y="36" fill="#638ECB" font-size="7" font-weight="bold">BAY B</text>
+              <text x="165" y="36" fill="#638ECB" font-size="7" font-weight="bold">BAY C</text>
+              <text x="235" y="36" fill="#638ECB" font-size="7" font-weight="bold">BAY D</text>
+
+              <!-- Drone Path Vector -->
+              <line x1="42" y1="32" x2="112" y2="78" stroke="#395886" stroke-width="1" stroke-dasharray="2 2" />
+              <line x1="112" y1="78" x2="182" y2="32" stroke="#395886" stroke-width="1" stroke-dasharray="2 2" />
+
+              <!-- Drone Target Node -->
+              <g id="drone-node">
+                <circle cx="42" cy="32" r="5" fill="rgba(16, 185, 129, 0.2)" />
+                <circle cx="42" cy="32" r="2.5" fill="#10B981" />
+                <text x="35" y="24" fill="#8AAEE0" font-size="7" font-weight="bold" font-family="monospace">ALPHA</text>
+              </g>
+
+              <!-- Incident highlights -->
+              <g id="hotspot-b3" style="display:none;">
+                <circle cx="112" cy="32" r="7" fill="rgba(239, 68, 68, 0.25)" class="pulse-anim" />
+                <circle cx="112" cy="32" r="3.5" fill="#EF4444" />
+              </g>
+            </svg>
+          </div>
+
+          <!-- Console overview status -->
+          <div class="console-header">
+            <div class="console-status">
+              <div class="status-dot" id="system-status-dot"></div>
+              <span class="console-subtitle">FACILITY SUMMARY INDEX</span>
+              <span class="console-title" id="system-status-title">ALL SECTORS NOMINAL</span>
+            </div>
+            <span class="status-tag" id="system-status-tag">NOMINAL</span>
+          </div>
+
+          <!-- Gauges -->
+          <div class="gauge-row">
+            <div class="gauge-box">
+              <span class="gauge-val mono" id="gauge-flight-count">1</span>
+              <span class="gauge-label">FLIGHT PATHS</span>
+            </div>
+            <div class="gauge-divider"></div>
+            <div class="gauge-box">
+              <span class="gauge-val mono" id="gauge-dock-count">1</span>
+              <span class="gauge-label">CHARGING COUPLING</span>
+            </div>
+            <div class="gauge-divider"></div>
+            <div class="gauge-box">
+              <span class="gauge-val mono" id="gauge-fault-count" style="color:var(--green);">0</span>
+              <span class="gauge-label">LOGGED FAULTS</span>
+            </div>
+          </div>
+
+          <!-- Balancer Switch -->
+          <div class="balancer-row">
+            <div class="balancer-text">
+              <span class="balancer-title">COUPLING AUTO-BALANCER</span>
+              <p class="balancer-desc">Rotates active flights into charge pads</p>
+            </div>
+            <div class="custom-switch on" id="balancer-toggle" onclick="toggleBalancer()">
+              <div class="custom-switch-knob"></div>
+            </div>
+          </div>
+
+          <!-- Incident Feed log -->
+          <div class="section-label-row">
+            <i data-lucide="terminal" style="width:11px;height:11px;color:var(--accent-blue);"></i>
+            <span class="section-label">TELEMETRIC COMMAND LOG</span>
+          </div>
+          
+          <div class="log-feed" id="log-list">
+            <!-- Empty state default -->
+            <div class="terminal-empty" id="empty-state" style="padding: 16px; text-align: center; border: 1px solid var(--border-color); border-radius: 8px;">
+              <span style="color:var(--green); font-size:10px; font-family:'JetBrains Mono'; font-weight:bold;">&gt; SECURE: FAULT RECOGNITION CLEAR</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================= STRUCTURE TAB ================= -->
+        <div id="panel-structural" class="screen-panel">
+          <div class="section-label-row">
+            <i data-lucide="layers" style="width:11px;height:11px;color:var(--accent-blue);"></i>
+            <span class="section-label">RACKING LOAD MONITOR DECK</span>
+          </div>
+
+          <div class="cal-box" style="background-color: var(--card-bg);">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <span class="map-heading">STRESS PROFILE NODES</span>
+                <h4 style="font-size:13px; font-weight:bold;">Sector B3 Rack Column</h4>
+              </div>
+              <span class="status-tag" id="rack-integrity-badge" style="border-color:var(--green); color:var(--green);">SAFE</span>
+            </div>
+            
+            <!-- Graphic deflection schematic blueprint -->
+            <svg width="100%" height="90" style="background-color:#05070B; border:1px solid var(--border-color); border-radius:6px; margin: 8px 0;" id="rack-svg">
+              <line x1="10" y1="10" x2="280" y2="10" stroke="#1a202c" stroke-width="1" stroke-dasharray="3 3" />
+              <line x1="10" y1="45" x2="280" y2="45" stroke="#1a202c" stroke-width="1" stroke-dasharray="3 3" />
+              <line x1="10" y1="80" x2="280" y2="80" stroke="#1a202c" stroke-width="1" stroke-dasharray="3 3" />
+              
+              <!-- Reference guide line -->
+              <line x1="145" y1="10" x2="145" y2="80" stroke="var(--green)" stroke-width="1" stroke-dasharray="4 4" opacity="0.4" />
+              
+              <!-- Bent column path -->
+              <path d="M 145 10 Q 145 45 145 80" fill="none" stroke="var(--green)" stroke-width="3" id="rack-column-path" />
+              <circle cx="145" cy="45" r="4.5" fill="var(--green)" id="rack-stress-dot" />
+
+              <text x="15" y="24" fill="var(--inactive-text)" font-size="7" font-family="monospace">DEV RATIO: <tspan id="rack-dev-val-lbl">3.4</tspan>mm</text>
+            </svg>
+
+            <!-- Diagnostics Metrics Table -->
+            <div style="display:flex; justify-content:space-between; background-color:#05070B; border:1px solid var(--border-color); padding: 8px; border-radius:6px; font-family:'JetBrains Mono'; font-size:10px;">
+              <div style="text-align:center; flex:1;">
+                <span id="metric-deflection-text" style="font-weight:bold;">3.4 mm</span>
+                <div style="font-size:7px; color:var(--inactive-text); margin-top:2px;">DEVIATION</div>
+              </div>
+              <div style="width:1px; background-color:var(--border-color);"></div>
+              <div style="text-align:center; flex:1;">
+                <span style="font-weight:bold;">12.0 mm</span>
+                <div style="font-size:7px; color:var(--inactive-text); margin-top:2px;">THRESHOLD</div>
+              </div>
+              <div style="width:1px; background-color:var(--border-color);"></div>
+              <div style="text-align:center; flex:1;">
+                <span id="metric-stability-text" style="font-weight:bold; color:var(--green);">99.4%</span>
+                <div style="font-size:7px; color:var(--inactive-text); margin-top:2px;">STABILITY</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="cal-box">
+            <div class="cal-title-row">
+              <i data-lucide="construction" style="width:14px;height:14px;color:var(--orange);"></i>
+              <span class="cal-title">Diagnostic Deflection Injection</span>
+            </div>
+            <p class="cal-desc">Inject load test deviations into the active SQLite registers to verify live threshold alarms.</p>
+            <button class="action-btn" style="background-color:var(--orange);" onclick="injectDeflectionFault()">
+              <i data-lucide="play" style="width:11px;height:11px;fill:currentColor;"></i>INJECT LOAD OVER-LIMIT
+            </button>
+          </div>
+        </div>
+
+        <!-- ================= VISION AI TAB ================= -->
+        <div id="panel-vision" class="screen-panel">
+          <div class="tab-selector">
+            <button class="tab-btn active" id="subtab-thermal" onclick="switchSubTab('thermal')">
+              <i data-lucide="flame" style="width:10px;height:10px;"></i>FLIR THERMAL
+            </button>
+            <button class="tab-btn" id="subtab-corrosion" onclick="switchSubTab('corrosion')">
+              <i data-lucide="camera" style="width:10px;height:10px;"></i>WELD INSPECT
+            </button>
+          </div>
+
+          <!-- FLIR VIEW -->
+          <div id="vision-thermal-view" style="display:flex; flex-direction:column; gap:12px;">
+            <div class="flir-grid" id="thermal-grid-cells">
+              <!-- Flir cells dynamically populated by JS -->
+            </div>
+            
+            <div class="cal-box">
+              <p class="cal-desc">Radiometric thermal scanners evaluate unlit electrical distributions to prevent fire failures.</p>
+              <button class="action-btn" style="background-color:var(--red); color:#fff;" onclick="injectThermalFault()">
+                <i data-lucide="flame" style="width:12px;height:12px;"></i>SIMULATE COUPLINGS SPIKE
+              </button>
+            </div>
+          </div>
+
+          <!-- CORROSION VIEW -->
+          <div id="vision-corrosion-view" style="display:none; flex-direction:column; gap:12px;">
+            <div class="weld-viewport">
+              <svg width="100%" height="130" id="weld-svg">
+                <rect x="2" y="2" width="98.5%" height="126" rx="4" fill="#040608" stroke="#171923" stroke-width="1" />
+                <path d="M 20 20 L 30 20 M 20 20 L 20 30 M 285 20 L 275 20 M 285 20 L 285 30" stroke="var(--accent-blue)" stroke-width="1.2" fill="none" />
+                <line x1="30" y1="90" x2="270" y2="90" stroke="#171923" stroke-width="10" />
+                <line x1="80" y1="30" x2="80" y2="90" stroke="#171923" stroke-width="6" />
+                <line x1="210" y1="30" x2="210" y2="90" stroke="#171923" stroke-width="6" />
+                <circle cx="210" cy="90" r="9" fill="rgba(99,116,139,0.2)" stroke="#2d3748" stroke-width="0.8" />
+
+                <!-- Scan targets -->
+                <g id="weld-defect-group" style="display:none;">
+                  <rect x="198" y="78" width="24" height="24" rx="2" fill="rgba(239,68,68,0.15)" stroke="var(--red)" stroke-width="1.2" />
+                  <text x="135" y="72" fill="var(--red)" font-size="7" font-weight="bold" font-family="monospace">FAULT: JOINT OXIDATION</text>
+                </g>
+                <g id="weld-nominal-group" style="display:none;">
+                  <rect x="10" y="10" width="93%" height="110" rx="2" fill="rgba(16,185,129,0.02)" stroke="var(--green)" stroke-width="1" />
+                  <text x="25" y="25" fill="var(--green)" font-size="7.5" font-weight="bold" font-family="monospace">CNN RESOLUTION: WELD NOMINAL</text>
+                </g>
+              </svg>
+
+              <!-- Scanner line -->
+              <div class="scanning-backdrop" id="weld-scanner-mask">
+                <div class="spinner"></div>
+                <span class="scanning-txt">RUNNING MODEL INFERENCE...</span>
+              </div>
+            </div>
+
+            <!-- HUD metadata parameters -->
+            <div class="gauge-row" style="padding: 8px 0; background-color:#05070B;">
+              <div class="gauge-box">
+                <span class="gauge-val mono" id="weld-status-val" style="font-size:11px;">STANDBY</span>
+                <span class="gauge-label" style="font-size:7px;">HUD STATE</span>
+              </div>
+              <div class="gauge-divider"></div>
+              <div class="gauge-box">
+                <span class="gauge-val mono" style="font-size:11px;">ResNet-50</span>
+                <span class="gauge-label" style="font-size:7px;">ENGINE</span>
+              </div>
+              <div class="gauge-divider"></div>
+              <div class="gauge-box">
+                <span class="gauge-val mono" id="weld-integrity-val" style="font-size:11px;">100%</span>
+                <span class="gauge-label" style="font-size:7px;">INTEGRITY</span>
+              </div>
+            </div>
+
+            <button class="action-btn" style="background-color:var(--accent-blue);" onclick="triggerVolumetricScan()">
+              <i data-lucide="sparkles" style="width:12px;height:12px;"></i>START SCAN SEQUENCE
+            </button>
+          </div>
+        </div>
+
+        <!-- ================= AUDIT TAB ================= -->
+        <div id="panel-audit" class="screen-panel">
+          <div class="section-label-row">
+            <i data-lucide="compass" style="width:11px;height:11px;color:var(--accent-blue);"></i>
+            <span class="section-label">RAPID SEISMIC SWEEP LOGS</span>
+          </div>
+
+          <!-- Mission Status Sweep Panel -->
+          <div class="cal-box" style="border-left: 3px solid var(--orange);" id="audit-mission-card">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span class="cal-title" id="audit-mission-title" style="color:var(--orange);">SWEEP REQUIRED</span>
+              <span class="mono" id="audit-mission-progress" style="font-size:14px; font-weight:bold;">0%</span>
+            </div>
+            <p class="cal-desc" id="audit-mission-desc">Authorize emergency drone patrols to scan truss indices following severe climate events.</p>
+            
+            <div style="height: 3px; background-color:#05070B; border-radius: 1.5px; overflow:hidden; border: 0.5px solid var(--border-color); margin-top:4px;">
+              <div id="audit-progress-fill" style="width:0%; height:100%; background-color:var(--orange); transition:width 0.2s;"></div>
+            </div>
+          </div>
+
+          <button class="action-btn" id="btn-start-audit" style="background-color:var(--green);" onclick="executeSwarmAudit()">
+            <i data-lucide="play" style="width:12px;height:12px;fill:currentColor;"></i>START EMERGENCY SWEEP
+          </button>
+
+          <!-- Checklists -->
+          <div class="check-list-container" id="audit-checklists">
+            <!-- Checklist items -->
+            <div class="check-box-item">
+              <div class="check-left">
+                <span class="check-status-badge mono" id="chk-badge-0" style="background-color:#171923; color:var(--inactive-text);">PENDING</span>
+                <div class="check-title-col">
+                  <span class="check-name">Truss Load Profiles</span>
+                  <span class="check-info">Evaluating deflection coordinates</span>
+                </div>
+              </div>
+            </div>
+            <div class="check-box-item">
+              <div class="check-left">
+                <span class="check-status-badge mono" id="chk-badge-1" style="background-color:#171923; color:var(--inactive-text);">PENDING</span>
+                <div class="check-title-col">
+                  <span class="check-name">Radiometric Hotspots</span>
+                  <span class="check-info">Evaluating distribution subpanels</span>
+                </div>
+              </div>
+            </div>
+            <div class="check-box-item">
+              <div class="check-left">
+                <span class="check-status-badge mono" id="chk-badge-2" style="background-color:#171923; color:var(--inactive-text);">PENDING</span>
+                <div class="check-title-col">
+                  <span class="check-name">Weld Oxidation Scan</span>
+                  <span class="check-info">Scanning roof joint connections</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================= POWER TAB ================= -->
+        <div id="panel-docking" class="screen-panel">
+          <div class="section-label-row">
+            <i data-lucide="zap" style="width:11px;height:11px;color:var(--accent-blue);"></i>
+            <span class="section-label">INDUCTIVE DOCK CONTROLS</span>
+          </div>
+
+          <div class="dock-list">
+            <!-- Slot 1 -->
+            <div class="dock-card">
+              <div class="dock-top">
+                <div>
+                  <span class="drone-id">Drone-Alpha</span>
+                  <div class="dock-lbl">DOCK-01 • INDUCTIVE PAD</div>
+                </div>
+                <span class="drone-status-tag" id="drone-status-badge-0" style="background-color:rgba(100,116,139,0.1); color:var(--inactive-text);">DOCKED</span>
+              </div>
+              <div class="battery-hud-box">
+                <div class="battery-hud-top">
+                  <div class="battery-hud-left">
+                    <i data-lucide="zap" style="width:10px;height:10px;" id="charge-icon-0"></i>
+                    <span id="battery-txt-0">95%</span>
+                    <span class="charging-rate" id="charge-rate-0" style="display:none;">+12.4W</span>
+                  </div>
+                  <span style="color:var(--inactive-text)">34°C</span>
+                </div>
+                <div class="battery-bar-bg">
+                  <div class="battery-bar-fill" id="battery-fill-0" style="width:95%; background-color:var(--green);"></div>
+                </div>
+              </div>
+              <span class="dock-task" id="dock-task-text-0">TASK: Standby Mode</span>
+              <button class="btn-engage-dock" id="btn-engage-0" onclick="toggleEngageDock(0)">ENGAGE CHARGE LOOP</button>
+            </div>
+
+            <!-- Slot 2 -->
+            <div class="dock-card">
+              <div class="dock-top">
+                <div>
+                  <span class="drone-id">Drone-Beta</span>
+                  <div class="dock-lbl">DOCK-02 • INDUCTIVE PAD</div>
+                </div>
+                <span class="drone-status-tag" style="background-color:rgba(16,185,129,0.08); color:var(--green);">PATROLLING</span>
+              </div>
+              <div class="battery-hud-box">
+                <div class="battery-hud-top">
+                  <div class="battery-hud-left">
+                    <i data-lucide="zap" style="width:10px;height:10px;color:var(--orange);"></i>
+                    <span>65%</span>
+                  </div>
+                  <span style="color:var(--inactive-text)">32°C</span>
+                </div>
+                <div class="battery-bar-bg">
+                  <div class="battery-bar-fill" style="width:65%; background-color:var(--orange);"></div>
+                </div>
+              </div>
+              <span class="dock-task">TASK: Structural Diagnostics</span>
+              <button class="btn-engage-dock" style="border-color:var(--border-color); color:var(--inactive-text);" disabled>AIRBORNE LINK (LOCKED)</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Footer navigation bar -->
+      <div class="tab-bar">
+        <div class="tab-item active" onclick="switchTab('home')">
+          <i data-lucide="cpu" style="width:18px;height:18px;"></i>
+          <span class="tab-lbl">Home</span>
+          <div class="tab-item-dot"></div>
+        </div>
+        <div class="tab-item" onclick="switchTab('structural')">
+          <i data-lucide="layers" style="width:18px;height:18px;"></i>
+          <span class="tab-lbl">Structure</span>
+          <div class="tab-item-dot"></div>
+        </div>
+        <div class="tab-item" onclick="switchTab('vision')">
+          <i data-lucide="eye" style="width:18px;height:18px;"></i>
+          <span class="tab-lbl">Vision AI</span>
+          <div class="tab-item-dot"></div>
+        </div>
+        <div class="tab-item" onclick="switchTab('audit')">
+          <i data-lucide="compass" style="width:18px;height:18px;"></i>
+          <span class="tab-lbl">Audit</span>
+          <div class="tab-item-dot"></div>
+        </div>
+        <div class="tab-item" onclick="switchTab('docking')">
+          <i data-lucide="battery-charging" style="width:18px;height:18px;"></i>
+          <span class="tab-lbl">Power Grid</span>
+          <div class="tab-item-dot"></div>
+        </div>
+      </div>
+
+      <!-- Critical alarm warning popup dialog modal -->
+      <div class="modal-overlay" id="alarm-modal">
+        <div class="modal-box">
+          <div class="modal-header">
+            <div class="modal-icon-ring">
+              <i data-lucide="shield-alert" style="width:24px;height:24px;color:var(--red);"></i>
+            </div>
+            <span class="modal-title">CRITICAL HAZARD WARNING</span>
+          </div>
+          <div class="modal-body">
+            <span class="modal-time" id="modal-timestamp">LOGGED: 09:09:21</span>
+            <span class="modal-msg" id="modal-msg-text">Steel Racking Column Sector B3 shows deflection of 14.2mm</span>
+            <div class="modal-severity-row">
+              <span style="color:var(--inactive-text);">SEVERITY INDEX:</span>
+              <span style="color:var(--red);" id="modal-severity-lbl">CRITICAL</span>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn-modal-resolve" onclick="resolveActiveFault()">
+              <i data-lucide="check" style="width:14px;height:14px;"></i>RESOLVE & SYNC REGISTERS
+            </button>
+            <button class="btn-modal-close" onclick="closeAlarmModal()">DISMISS WARNING</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // Lucide initialization
+    lucide.createIcons();
+
+    // App core state
+    let activeTabId = 'home';
+    let isAutoBalancerOn = true;
+    let alarmIndexList = [];
+    let alarmHistory = [];
+    
+    // Telemetry and updates simulator
+    let droneX = 42;
+    let droneY = 32;
+    let droneDirection = 1;
+
+    // Time ticker
+    function updateOSTime() {
+      const now = new Date();
+      let hrs = now.getHours().toString().padStart(2, '0');
+      let mins = now.getMinutes().toString().padStart(2, '0');
+      document.getElementById('os-time').innerText = `${hrs}:${mins}`;
+    }
+    setInterval(updateOSTime, 1000);
+    updateOSTime();
+
+    // Dynamic Drone Vector movement
+    function moveDroneVector() {
+      const droneG = document.getElementById('drone-node');
+      if (!droneG) return;
+      
+      // Interpolate along route line: (42, 32) -> (112, 78) -> (182, 32)
+      if (droneDirection === 1) {
+        droneX += 1.4;
+        droneY += 0.92;
+        if (droneX >= 112) {
+          droneX = 112;
+          droneY = 78;
+          droneDirection = 2;
+        }
+      } else if (droneDirection === 2) {
+        droneX += 1.4;
+        droneY -= 0.92;
+        if (droneX >= 182) {
+          droneX = 182;
+          droneY = 32;
+          droneDirection = 3;
+        }
+      } else if (droneDirection === 3) {
+        droneX -= 1.4;
+        droneY += 0.92;
+        if (droneX <= 112) {
+          droneX = 112;
+          droneY = 78;
+          droneDirection = 4;
+        }
+      } else {
+        droneX -= 1.4;
+        droneY -= 0.92;
+        if (droneX <= 42) {
+          droneX = 42;
+          droneY = 32;
+          droneDirection = 1;
+        }
+      }
+
+      // Update SVG coordinates
+      const circles = droneG.getElementsByTagName('circle');
+      circles[0].setAttribute('cx', droneX);
+      circles[0].setAttribute('cy', droneY);
+      circles[1].setAttribute('cx', droneX);
+      circles[1].setAttribute('cy', droneY);
+      
+      const txt = droneG.getElementsByTagName('text')[0];
+      txt.setAttribute('x', droneX - 12);
+      txt.setAttribute('y', droneY - 8);
+    }
+    setInterval(moveDroneVector, 200);
+
+    // Navigation routing switcher
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-item').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.screen-panel').forEach(el => el.classList.remove('active'));
+      
+      const targetPanel = document.getElementById(`panel-${tabId}`);
+      if (targetPanel) targetPanel.classList.add('active');
+      
+      // Update footer icons highlight
+      let index = 0;
+      if (tabId === 'home') index = 0;
+      else if (tabId === 'structural') index = 1;
+      else if (tabId === 'vision') index = 2;
+      else if (tabId === 'audit') index = 3;
+      else if (tabId === 'docking') index = 4;
+
+      document.querySelectorAll('.tab-item')[index].classList.add('active');
+      activeTabId = tabId;
+    }
+
+    // Toggle Balancer settings
+    function toggleBalancer() {
+      const toggle = document.getElementById('balancer-toggle');
+      isAutoBalancerOn = !isAutoBalancerOn;
+      if (isAutoBalancerOn) {
+        toggle.classList.add('on');
+      } else {
+        toggle.classList.remove('on');
+      }
+    }
+
+    // Populate Thermal cells
+    const flirZones = [
+      'Subpanel D4', 'Electrical Box A', 'Forklift Bay 2',
+      'Battery Wall', 'Main Switchboard', 'Compressor Bay',
+      'Boiler Outlet', 'HVAC Trunk E', 'Capacitor Bank'
+    ];
+    let thermalTemps = [31, 28, 40, 34, 29, 26, 31, 39, 40];
+
+    function renderThermalGrid() {
+      const container = document.getElementById('thermal-grid-cells');
+      if (!container) return;
+      
+      container.innerHTML = '';
+      thermalTemps.forEach((temp, i) => {
+        let borderClr = 'var(--border-color)';
+        let bgClr = '#07080A';
+        let txtClr = 'var(--active-text)';
+        let statusTxt = 'STBL';
+
+        if (temp > 70) {
+          borderClr = 'var(--red)';
+          bgClr = 'rgba(239, 68, 68, 0.08)';
+          txtClr = 'var(--red)';
+          statusTxt = 'CRIT';
+        } else if (temp > 40) {
+          borderClr = 'var(--orange)';
+          bgClr = 'rgba(245, 158, 11, 0.08)';
+          txtClr = 'var(--orange)';
+          statusTxt = 'SPIKE';
+        }
+
+        container.innerHTML += `
+          <div class="flir-cell" style="border-color:${borderClr}; background-color:${bgClr};">
+            <span class="flir-zone">${flirZones[i]}</span>
+            <span class="flir-temp mono" style="color:${txtClr};">${temp}°C</span>
+            <span class="flir-status" style="color:${borderClr};">${statusTxt}</span>
+          </div>
+        `;
+      });
+    }
+    renderThermalGrid();
+
+    // Fluctuating values loop
+    setInterval(() => {
+      thermalTemps = thermalTemps.map((t, idx) => {
+        // If a high thermal fault is active, keep cell hot
+        const isHotFault = alarmIndexList.some(a => a.type === 'thermal' && a.resolved === false);
+        if (idx === 2 && isHotFault) return 78;
+        
+        const drift = Math.random() > 0.5 ? 1 : -1;
+        const base = idx === 2 ? 40 : 30;
+        return Math.max(22, Math.min(55, t + drift));
+      });
+      renderThermalGrid();
+    }, 4000);
+
+    // Switch between FLIR and CNN tabs
+    function switchSubTab(subTab) {
+      document.getElementById('subtab-thermal').classList.remove('active');
+      document.getElementById('subtab-corrosion').classList.remove('active');
+      document.getElementById('vision-thermal-view').style.display = 'none';
+      document.getElementById('vision-corrosion-view').style.display = 'none';
+
+      if (subTab === 'thermal') {
+        document.getElementById('subtab-thermal').classList.add('active');
+        document.getElementById('vision-thermal-view').style.display = 'flex';
+      } else {
+        document.getElementById('subtab-corrosion').classList.add('active');
+        document.getElementById('vision-corrosion-view').style.display = 'flex';
+      }
+    }
+
+    // Simulated scanner model sequence
+    function triggerVolumetricScan() {
+      const mask = document.getElementById('weld-scanner-mask');
+      const statusVal = document.getElementById('weld-status-val');
+      const integrityVal = document.getElementById('weld-integrity-val');
+      const defectGroup = document.getElementById('weld-defect-group');
+      const nominalGroup = document.getElementById('weld-nominal-group');
+      
+      mask.classList.add('active');
+      statusVal.innerText = "SCANNING";
+      defectGroup.style.display = "none";
+      nominalGroup.style.display = "none";
+
+      setTimeout(() => {
+        mask.classList.remove('active');
+        const findsDefect = Math.random() > 0.4;
+
+        if (findsDefect) {
+          statusVal.innerText = "FAULT";
+          statusVal.style.color = "var(--red)";
+          integrityVal.innerText = "67%";
+          integrityVal.style.color = "var(--red)";
+          defectGroup.style.display = "block";
+          
+          triggerSystemAlert({
+            type: 'corrosion',
+            severity: 'high',
+            message: 'CNN scan: Joint weld oxidation found at Node W-104. Joint integrity: 67%.'
+          });
+        } else {
+          statusVal.innerText = "CLEAR";
+          statusVal.style.color = "var(--green)";
+          integrityVal.innerText = "100%";
+          integrityVal.style.color = "var(--green)";
+          nominalGroup.style.display = "block";
+        }
+      }, 2000);
+    }
+
+    // Trigger system alerts & push modals
+    let alertSequenceCounter = 1;
+    function triggerSystemAlert(alertObj) {
+      const id = 'alert-' + alertSequenceCounter++;
+      const alertItem = {
+        id,
+        timestamp: Date.now(),
+        type: alertObj.type,
+        severity: alertObj.severity,
+        message: alertObj.message,
+        resolved: false
+      };
+
+      alarmIndexList.unshift(alertItem);
+      updateAlertListFeed();
+      showAlarmModal(alertItem);
+    }
+
+    // Show Warning Modal dialog
+    let activeModalAlertId = null;
+    function showAlarmModal(alert) {
+      activeModalAlertId = alert.id;
+      const modal = document.getElementById('alarm-modal');
+      const timeLbl = document.getElementById('modal-timestamp');
+      const msgTxt = document.getElementById('modal-msg-text');
+      const severityLbl = document.getElementById('modal-severity-lbl');
+      const modalBox = modal.querySelector('.modal-box');
+
+      timeLbl.innerText = `LOGGED: ${new Date(alert.timestamp).toLocaleTimeString([], { hour12: false })}`;
+      msgTxt.innerText = alert.message;
+      severityLbl.innerText = alert.severity.toUpperCase();
+
+      if (alert.severity === 'critical') {
+        severityLbl.style.color = "var(--red)";
+        modalBox.style.borderColor = "var(--red)";
+      } else {
+        severityLbl.style.color = "var(--orange)";
+        modalBox.style.borderColor = "var(--orange)";
+      }
+
+      modal.classList.add('active');
+    }
+
+    function closeAlarmModal() {
+      document.getElementById('alarm-modal').classList.remove('active');
+      activeModalAlertId = null;
+    }
+
+    // Resolve system alerts
+    function resolveActiveFault() {
+      if (!activeModalAlertId) return;
+      
+      const alert = alarmIndexList.find(a => a.id === activeModalAlertId);
+      if (alert) {
+        alert.resolved = true;
+        
+        // Remove from current active log feed list
+        alarmIndexList = alarmIndexList.filter(a => a.id !== activeModalAlertId);
+        
+        // Change dashboard values
+        if (alert.type === 'deflection') {
+          resetStructuralSchema();
+        }
+
+        updateAlertListFeed();
+      }
+      closeAlarmModal();
+    }
+
+    // Set structure visual to default
+    function resetStructuralSchema() {
+      const path = document.getElementById('rack-column-path');
+      const dot = document.getElementById('rack-stress-dot');
+      const badge = document.getElementById('rack-integrity-badge');
+      const textVal = document.getElementById('metric-deflection-text');
+      const textStb = document.getElementById('metric-stability-text');
+      const textValLbl = document.getElementById('rack-dev-val-lbl');
+      
+      path.setAttribute('d', 'M 145 10 Q 145 45 145 80');
+      path.setAttribute('stroke', 'var(--green)');
+      dot.setAttribute('cx', '145');
+      dot.setAttribute('fill', 'var(--green)');
+      
+      badge.innerText = 'SAFE';
+      badge.style.borderColor = 'var(--green)';
+      badge.style.color = 'var(--green)';
+
+      textVal.innerText = '3.4 mm';
+      textVal.style.color = 'var(--active-text)';
+      textStb.innerText = '99.4%';
+      textStb.style.color = 'var(--green)';
+      textValLbl.innerText = '3.4';
+    }
+
+    // Inject deflection faults
+    function injectDeflectionFault() {
+      const path = document.getElementById('rack-column-path');
+      const dot = document.getElementById('rack-stress-dot');
+      const badge = document.getElementById('rack-integrity-badge');
+      const textVal = document.getElementById('metric-deflection-text');
+      const textStb = document.getElementById('metric-stability-text');
+      const textValLbl = document.getElementById('rack-dev-val-lbl');
+      
+      path.setAttribute('d', 'M 145 10 Q 185 45 145 80');
+      path.setAttribute('stroke', 'var(--red)');
+      dot.setAttribute('cx', '165');
+      dot.setAttribute('fill', 'var(--red)');
+
+      badge.innerText = 'OVERLOAD';
+      badge.style.borderColor = 'var(--red)';
+      badge.style.color = 'var(--red)';
+
+      textVal.innerText = '14.2 mm';
+      textVal.style.color = 'var(--red)';
+      textStb.innerText = '82.1%';
+      textStb.style.color = 'var(--red)';
+      textValLbl.innerText = '14.2';
+
+      // Blinks vector map alert icon
+      document.getElementById('hotspot-b3').style.display = 'block';
+
+      triggerSystemAlert({
+        type: 'deflection',
+        severity: 'critical',
+        message: 'Steel Racking Column Sector B3 shows deflection of 14.2mm (Safety limit: 12.0mm)'
+      });
+    }
+
+    function injectThermalFault() {
+      triggerSystemAlert({
+        type: 'thermal',
+        severity: 'high',
+        message: 'Radiometric spike at Electrical Subpanel Panel-D4: 78°C — Thermal threshold exceeded'
+      });
+    }
+
+    // Render alert log feeds
+    function updateAlertListFeed() {
+      const list = document.getElementById('log-list');
+      const empty = document.getElementById('empty-state');
+      const faultGauge = document.getElementById('gauge-fault-count');
+      const statusTitle = document.getElementById('system-status-title');
+      const statusTag = document.getElementById('system-status-tag');
+      const statusDot = document.getElementById('system-status-dot');
+
+      // Clear list contents except empty template
+      const items = list.querySelectorAll('.log-item');
+      items.forEach(el => el.remove());
+
+      const activeAlerts = alarmIndexList.filter(a => !a.resolved);
+      faultGauge.innerText = activeAlerts.length;
+
+      if (activeAlerts.length === 0) {
+        empty.style.display = 'block';
+        faultGauge.style.color = 'var(--green)';
+        statusTitle.innerText = 'ALL SECTORS NOMINAL';
+        statusTag.innerText = 'NOMINAL';
+        statusTag.style.borderColor = 'var(--green)';
+        statusTag.style.color = 'var(--green)';
+        statusDot.style.backgroundColor = 'var(--green)';
+        document.getElementById('hotspot-b3').style.display = 'none';
+      } else {
+        empty.style.display = 'none';
+        
+        const hasCrit = activeAlerts.some(a => a.severity === 'critical');
+        if (hasCrit) {
+          statusTitle.innerText = 'SECTOR ANOMALY';
+          statusTag.innerText = 'CRITICAL';
+          statusTag.style.borderColor = 'var(--red)';
+          statusTag.style.color = 'var(--red)';
+          statusDot.style.backgroundColor = 'var(--red)';
+          faultGauge.style.color = 'var(--red)';
+        } else {
+          statusTitle.innerText = 'TELEMETRY FLAGGED';
+          statusTag.innerText = 'WARNING';
+          statusTag.style.borderColor = 'var(--orange)';
+          statusTag.style.color = 'var(--orange)';
+          statusDot.style.backgroundColor = 'var(--orange)';
+          faultGauge.style.color = 'var(--orange)';
+        }
+
+        activeAlerts.forEach(a => {
+          const timeStr = new Date(a.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+          const severityColor = a.severity === 'critical' ? 'var(--red)' : 'var(--orange)';
+          
+          const logCard = document.createElement('div');
+          logCard.className = 'log-item';
+          logCard.onclick = () => showAlarmModal(a);
+          logCard.innerHTML = `
+            <div class="log-top">
+              <span class="log-severity mono" style="color:${severityColor}">[${a.severity.toUpperCase()}]</span>
+              <span class="log-time">${timeStr}</span>
+            </div>
+            <p class="log-message">&gt; ${a.message}</p>
+            <div class="log-footer">
+              <span>SRC: ${a.type.toUpperCase()}_SCANNER</span>
+              <div class="log-action">
+                <span>DECK</span>
+                <i data-lucide="chevron-right" style="width:10px;height:10px;"></i>
+              </div>
+            </div>
+          `;
+          list.appendChild(logCard);
+        });
+        lucide.createIcons();
+      }
+    }
+
+    // Swarm checklists sweep automation
+    function executeSwarmAudit() {
+      const btn = document.getElementById('btn-start-audit');
+      const progressTxt = document.getElementById('audit-mission-progress');
+      const progressFill = document.getElementById('audit-progress-fill');
+      const title = document.getElementById('audit-mission-title');
+      const desc = document.getElementById('audit-mission-desc');
+      const card = document.getElementById('audit-mission-card');
+
+      btn.disabled = true;
+      btn.style.backgroundColor = 'var(--card-bg)';
+      btn.style.color = 'var(--inactive-text)';
+      btn.innerText = "SWEEP IN PROGRESS...";
+
+      title.innerText = "SWARM DEPLOYED";
+      title.style.color = 'var(--orange)';
+      card.style.borderColor = 'var(--orange)';
+      desc.innerText = "Drone agents executing programmatic grid inspections...";
+
+      let step = 0;
+      const interval = setInterval(() => {
+        step += 1;
+        const progress = step * 33;
+        progressTxt.innerText = `${Math.min(100, progress)}%`;
+        progressFill.style.width = `${Math.min(100, progress)}%`;
+
+        // Update checklist items dynamically
+        if (step >= 1) {
+          const b0 = document.getElementById('chk-badge-0');
+          b0.innerText = "COMPLETED";
+          b0.style.backgroundColor = "rgba(16,185,129,0.12)";
+          b0.style.color = "var(--green)";
+        }
+        if (step >= 2) {
+          const b1 = document.getElementById('chk-badge-1');
+          b1.innerText = "COMPLETED";
+          b1.style.backgroundColor = "rgba(16,185,129,0.12)";
+          b1.style.color = "var(--green)";
+        }
+        if (step >= 3) {
+          const b2 = document.getElementById('chk-badge-2');
+          b2.innerText = "COMPLETED";
+          b2.style.backgroundColor = "rgba(16,185,129,0.12)";
+          b2.style.color = "var(--green)";
+
+          // Finish sweep configuration
+          clearInterval(interval);
+          title.innerText = "FACILITY CLEARED";
+          title.style.color = 'var(--green)';
+          card.style.borderColor = 'var(--green)';
+          progressFill.style.backgroundColor = 'var(--green)';
+          desc.innerText = "Seismic and wind indicators clear. Re-entry authorization GRANTED.";
+
+          btn.disabled = false;
+          btn.style.backgroundColor = 'var(--green)';
+          btn.style.color = '#07080A';
+          btn.innerHTML = `<i data-lucide="refresh-cw" style="width:12px;height:12px;"></i>RE-LAUNCH SWEEP`;
+          lucide.createIcons();
+
+          triggerSystemAlert({
+            type: 'audit',
+            severity: 'low',
+            message: 'Swarm Audit Completed: All 4 major sectors cleared. Building SAFE for re-entry.'
+          });
+        }
+      }, 1500);
+    }
+
+    // Toggle Dock Charger engagement
+    let chargingStates = [false];
+    function toggleEngageDock(index) {
+      const btn = document.getElementById(`btn-engage-${index}`);
+      const badge = document.getElementById(`drone-status-badge-${index}`);
+      const valTxt = document.getElementById(`battery-txt-${index}`);
+      const rateTxt = document.getElementById(`charge-rate-${index}`);
+      const fillBar = document.getElementById(`battery-fill-${index}`);
+      const taskTxt = document.getElementById(`dock-task-text-0`);
+      
+      chargingStates[index] = !chargingStates[index];
+      
+      if (chargingStates[index]) {
+        btn.classList.add('active');
+        btn.innerText = "DISENGAGE INDUCTIVE PAD";
+        
+        badge.innerText = "CHARGING";
+        badge.style.backgroundColor = "rgba(99,102,241,0.15)";
+        badge.style.color = "#818cf8";
+        
+        rateTxt.style.display = "inline";
+        taskTxt.innerText = "TASK: Docked & Recharging";
+        
+        // Increase battery over time mock
+        let battery = 95;
+        const batteryInterval = setInterval(() => {
+          if (!chargingStates[index]) {
+            clearInterval(batteryInterval);
+            return;
+          }
+          if (battery < 100) {
+            battery += 1;
+            valTxt.innerText = `${battery}%`;
+            fillBar.style.width = `${battery}%`;
+          } else {
+            clearInterval(batteryInterval);
+          }
+        }, 3000);
+      } else {
+        btn.classList.remove('active');
+        btn.innerText = "ENGAGE CHARGE LOOP";
+        
+        badge.innerText = "DOCKED";
+        badge.style.backgroundColor = "rgba(100,116,139,0.1)";
+        badge.style.color = "var(--inactive-text)";
+        
+        rateTxt.style.display = "none";
+        taskTxt.innerText = "TASK: Standby Mode";
+      }
+    }
+  </script>
+</body>
+</html>
