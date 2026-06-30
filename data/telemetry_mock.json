@@ -1,0 +1,15 @@
+{
+  "calibration_targets": [
+    { "target_id": "CAL-WELD-01", "sector": "Sector E", "ref_coordinates": [12.4, 45.8, 12.0], "base_integrity": 1.0 },
+    { "target_id": "CAL-RACK-B3", "sector": "Sector B3", "ref_coordinates": [4.5, 12.1, 0.0], "max_deflection_mm": 12.0 }
+  ],
+  "drones_telemetry_defaults": [
+    {
+      "drone_id": "Drone-Alpha",
+      "model": "SafeStack-V4-Quad",
+      "payload": ["FLIR-Radiometric-Thermal", "4K-Global-Shutter-RGB"],
+      "comms_frequency_ghz": 5.8,
+      "max_flight_duration_min": 25.0
+    }
+  ]
+}
